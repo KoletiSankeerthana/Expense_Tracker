@@ -326,6 +326,16 @@ else:
     
     # Dynamic Import and Call
     import importlib
-    module = importlib.import_module(config['import'])
+    # Define a whitelist of explicitly allowed modules to prevent arbitrary code execution
+ALLOWED_MODULES = [
+    "your_app_module_1", 
+    "your_app_module_2", 
+    "streamlit_helpers"
+] # Customize this list with modules genuinely needed
+
+module_name = config['import']
+if module_name not in ALLOWED_MODULES:
+    raise ValueError(f"Attempted to import an unauthorized module: {module_name}. Only explicitly allowed modules can be imported.")
+module = importlib.import_module(module_name)
     content_func = getattr(module, config['render'])
     content_func()
